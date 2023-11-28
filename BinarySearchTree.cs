@@ -45,8 +45,12 @@ namespace Do_an_CTDL
             if (parent != null)
             {
                 TraverseInOrder(parent.LeftNode);
-                Console.WriteLine("{0,5}{1,25}{2,5}{3,15}{4,15}{5,25}{6,6}", parent.Data.Madatphong, parent.Data.Tenkhachhang, parent.Data.GioiTinh,
-                     parent.Data.Ngaydatphong.ToString("d", viVn), parent.Data.loaiphong, parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
+                parent.Data.Madatphong, parent.Data.Tenkhachhang,
+                parent.Data.GioiTinh, parent.Data.Email,
+                parent.Data.Ngaydatphong.ToString("d", viVn),
+                parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
+                parent.Data.trangthaiphong, parent.Data.sodienthoai);
                 TraverseInOrder(parent.RightNode);
             }
         }
@@ -58,11 +62,12 @@ namespace Do_an_CTDL
             {
                 findname(parent.LeftNode, Tenkhachhang);
                 if (parent.Data.Tenkhachhang == Tenkhachhang)
-                    Console.WriteLine("{0,5}{1,25}{2,5}{3,15}{4,15}{5,25}{6,6}",
+                    Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
                     parent.Data.Madatphong, parent.Data.Tenkhachhang,
-                    parent.Data.GioiTinh,
+                    parent.Data.GioiTinh, parent.Data.Email,
                     parent.Data.Ngaydatphong.ToString("d", viVn),
-                    parent.Data.loaiphong, parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                    parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
+                    parent.Data.trangthaiphong, parent.Data.sodienthoai);
                 findname(parent.RightNode, Tenkhachhang);
             }
         }
@@ -75,11 +80,12 @@ namespace Do_an_CTDL
                 finddate(parent.LeftNode, date1, date2);
                 if (parent.Data.Ngaydatphong <= date2 && parent.Data.Ngaydatphong >=
                 date1)
-                    Console.WriteLine("{0,5}{1,25}{2,5}{3,15}{4,15}{5,25}{6,6}",
+                    Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
                     parent.Data.Madatphong, parent.Data.Tenkhachhang,
-                    parent.Data.GioiTinh,
+                    parent.Data.GioiTinh, parent.Data.Email,
                     parent.Data.Ngaydatphong.ToString("d", viVn),
-                    parent.Data.loaiphong, parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                    parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
+                    parent.Data.trangthaiphong, parent.Data.sodienthoai);
                 finddate(parent.RightNode, date1, date2);
             }
         }
@@ -89,33 +95,63 @@ namespace Do_an_CTDL
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
             Hosokhachhang h = new Hosokhachhang();
+
             Console.WriteLine("Nhập mã đặt phòng (ID_Booking): ");
             h.Madatphong = Console.ReadLine();
+
             Console.WriteLine("Nhập tên khách hàng: ");
-            h.Tenkhachhang = Console.ReadLine();
+            h.Tenkhachhang = Console.ReadLine().ToLower();
+
             do
             {
                 Console.WriteLine("Nhập giới tính khách hàng(male/female): ");
-                h.GioiTinh = Console.ReadLine();
+                h.GioiTinh = Console.ReadLine().ToLower();
             }
             while (h.GioiTinh != "male" && h.GioiTinh != "female");
 
-            Console.WriteLine("Nhập ngày đặt phòng: ");
-            h.Ngaydatphong = DateTime.Parse(Console.ReadLine());
+            Console.WriteLine("Nhập email khách hàng");
+            h.Email = Console.ReadLine();
+
+            bool isValidDate = false;
+            DateTime ngayDatPhong;
+
+            do
+            {
+                Console.WriteLine("Nhập ngày đặt phòng (MM/dd/yyyy): ");
+                string dateString = Console.ReadLine();
+
+                isValidDate = DateTime.TryParseExact(dateString, "MM/dd/yyyy", null, DateTimeStyles.None, out ngayDatPhong);
+
+                if (!isValidDate)
+                {
+                    Console.WriteLine("Định dạng ngày không hợp lệ. Vui lòng nhập lại.");
+                }
+            } while (!isValidDate);
+            h.Ngaydatphong = ngayDatPhong;
+
             do
             {
                 Console.WriteLine("Loại phòng đã được đặt:(Standard/Deluxe):  ");
-                h.loaiphong = Console.ReadLine();
+                h.loaiphong = Console.ReadLine().ToLower();
             }
-            while (h.loaiphong != "Standard" && h.loaiphong != "Deluxe");
+            while (h.loaiphong != "standard" && h.loaiphong != "deluxe");
+
+            Console.WriteLine("Nhập số lượng phòng đã đặt: ");
+            h.luongphong = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("Nhập số lượng người sẽ cư trú");
+            h.luongnguoi = int.Parse(Console.ReadLine());
+
             do
             {
-                Console.WriteLine("Nhập trạng thái hiện tại của phòng(cancle/no_cancle): ");
-                h.trangthaiphong = Console.ReadLine();
+                Console.WriteLine("Nhập trạng thái hiện tại của phòng(thanh toan/chưa thanh toan): ");
+                h.trangthaiphong = Console.ReadLine().ToLower();
             }
-            while (h.trangthaiphong != "cancle" && h.trangthaiphong != "no_cancle");
+            while (h.trangthaiphong != "thanh toan" && h.trangthaiphong != "chua thanh toan");
+
             Console.WriteLine("Nhập số điện thoại khách hàng ");
             h.sodienthoai = (Console.ReadLine());
+            Console.WriteLine("=================================================");
             binaryTree.Insert(h);
         }
     }
