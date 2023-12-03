@@ -121,7 +121,7 @@ namespace Do_an_CTDL
                 Hosokhachhang h = new Hosokhachhang();
 
                 // Đọc dữ liệu từ file để lấy mã đặt phòng cuối cùng
-                string filePath = @"C:\\Users\\dell\\Downloads\\Thông-tin-khách-hàng1 (5).tsv";
+                string filePath = @"C:\\Users\\dell\\Downloads\\Thông-tin-khách-hàng1 (2).tsv";
                 int lastBookingId = ReadLastBookingIdFromFile(filePath);
 
                 // Tăng giá trị mã đặt phòng cuối cùng lên 1
@@ -129,9 +129,6 @@ namespace Do_an_CTDL
 
                 // Gán mã đặt phòng mới cho trường tương ứng trong đối tượng Hosokhachhang
                 h.Madatphong = newBookingId.ToString();
-
-                // Các bước khác để nhập thông tin khách hàng
-                // ...
 
                 Console.WriteLine("=================================================");
                 binaryTree.Insert(h);
@@ -221,16 +218,13 @@ namespace Do_an_CTDL
             // Tạo một phiên bản của BinarySearchTree
             BinarySearchTree binaryTree = new BinarySearchTree();
 
-            string filePath = @"C:\Users\dell\Downloads\Thông-tin-khách-hàng1 (5).tsv";
+            string filePath = @"C:\Users\dell\Downloads\Thông-tin-khách-hàng1 (2).tsv";
 
             // Đọc từng dòng tệp TSV
             string[] lines = File.ReadAllLines(filePath);
-            // Lấy mã đặt phòng đầu tiên từ dòng cuối cùng
-            string lastLine = lines[lines.Length - 1];
-            string[] lastLineFields = lastLine.Split('\t');
           
             // Giả sử dữ liệu bắt đầu từ dòng thứ hai (không bao gồm tiêu đề)
-            for (int i = 1; i < lines.Length; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
                 string[] fields = line.Split('\t');
@@ -239,23 +233,31 @@ namespace Do_an_CTDL
                 Hosokhachhang hosokhachhang = new Hosokhachhang
                 {
 
-                    Madatphong = fields[1],
-                    Tenkhachhang = fields[2],
-                    GioiTinh = fields[3],
-                    Email = fields[4],
-                    sodienthoai = fields[5],
-                    loaiphong = fields[6],
-                    Ngaydatphong = DateTime.Parse(fields[7]),
-                    luongphong = int.Parse(fields[10]),
-                    luongnguoi = int.Parse(fields[11]),
-                    trangthaiphong = fields[12]
+                    Madatphong = fields[0],
+                    Tenkhachhang = fields[1],
+                    GioiTinh = fields[2],
+                    Email = fields[3],
+                    sodienthoai = fields[4],
+                    loaiphong = fields[5],
+                    Ngaydatphong = DateTime.MinValue,
+                    luongphong = int.Parse(fields[7]),
+                    luongnguoi = int.Parse(fields[8]),
+                    trangthaiphong = fields[9]
                 };
+                string ngayDatPhongString = fields[6];
+                DateTime ngayDatPhong;
 
+                if (DateTime.TryParseExact(ngayDatPhongString, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out ngayDatPhong))
+                {
+                    hosokhachhang.Ngaydatphong = ngayDatPhong;
+                }
+                else
+                {
+                    // Xử lý khi ngày tháng không hợp lệ
+                }
                 // Chèn dữ liệu vào cây tìm kiếm nhị phân
                 binaryTree.Insert(hosokhachhang);
             }
-
-
             string answer;
             do
             {
