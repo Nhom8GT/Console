@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+
 namespace Do_an_CTDL
 {
     internal class Program
@@ -70,10 +72,10 @@ namespace Do_an_CTDL
                     TraverseInOrder(parent.LeftNode);
                     Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
                     parent.Data.Madatphong, parent.Data.Tenkhachhang,
-                    parent.Data.GioiTinh, parent.Data.Email,
-                    parent.Data.Ngaydatphong.ToString("d", viVn),
-                    parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
-                    parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                    parent.Data.GioiTinh, parent.Data.Email, parent.Data.sodienthoai ,
+                    parent.Data.loaiphong, parent.Data.Ngaydatphong.ToString("d", viVn),
+                    parent.Data.luongphong, parent.Data.luongnguoi,
+                    parent.Data.trangthaiphong) ;
                     TraverseInOrder(parent.RightNode);
                 }
             }
@@ -84,13 +86,13 @@ namespace Do_an_CTDL
                 if (parent != null)
                 {
                     findname(parent.LeftNode, Tenkhachhang);
-                    if (parent.Data.Tenkhachhang == Tenkhachhang)
-                        Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
-                        parent.Data.Madatphong, parent.Data.Tenkhachhang,
-                        parent.Data.GioiTinh,parent.Data.Email, 
-                        parent.Data.Ngaydatphong.ToString("d", viVn),
-                        parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
-                        parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                    if (parent.Data.Tenkhachhang.ToLower().Contains(Tenkhachhang.ToLower()))
+                    Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
+                    parent.Data.Madatphong, parent.Data.Tenkhachhang,
+                    parent.Data.GioiTinh, parent.Data.Email, parent.Data.sodienthoai ,
+                    parent.Data.loaiphong, parent.Data.Ngaydatphong.ToString("d", viVn),
+                    parent.Data.luongphong, parent.Data.luongnguoi,
+                    parent.Data.trangthaiphong) ;
                     findname(parent.RightNode, Tenkhachhang);
                 }
             }
@@ -101,14 +103,13 @@ namespace Do_an_CTDL
                 if (parent != null)
                 {
                     finddate(parent.LeftNode, date1, date2);
-                    if (parent.Data.Ngaydatphong <= date2 && parent.Data.Ngaydatphong >=
-                    date1)
-                        Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
-                        parent.Data.Madatphong, parent.Data.Tenkhachhang,
-                        parent.Data.GioiTinh, parent.Data.Email,
-                        parent.Data.Ngaydatphong.ToString("d", viVn),
-                        parent.Data.loaiphong, parent.Data.luongphong, parent.Data.luongnguoi,
-                        parent.Data.trangthaiphong, parent.Data.sodienthoai);
+                    if (parent.Data.Ngaydatphong >= date1 && parent.Data.Ngaydatphong <= date2)
+                    Console.WriteLine("{0,5}{1,10}{2,10}{3,25}{4,25}{5,25}{6,5}{7,5}{8,20}{9,15}",
+                    parent.Data.Madatphong, parent.Data.Tenkhachhang,
+                    parent.Data.GioiTinh, parent.Data.Email, parent.Data.sodienthoai ,
+                    parent.Data.loaiphong, parent.Data.Ngaydatphong.ToString("d", viVn),
+                    parent.Data.luongphong, parent.Data.luongnguoi,
+                    parent.Data.trangthaiphong) ;
                     finddate(parent.RightNode, date1, date2);
                 }
             }
@@ -119,10 +120,28 @@ namespace Do_an_CTDL
                 Console.InputEncoding = Encoding.UTF8;
                 Hosokhachhang h = new Hosokhachhang();
 
-                Console.WriteLine("Nhập mã đặt phòng (ID_Booking): ");
-                h.Madatphong = Console.ReadLine();
+                // Đọc dữ liệu từ file để lấy mã đặt phòng cuối cùng
+                string filePath = @"C:\\Users\\dell\\Downloads\\Thông-tin-khách-hàng1 (5).tsv";
+                int lastBookingId = ReadLastBookingIdFromFile(filePath);
 
-                Console.WriteLine("Nhập tên khách hàng: ");
+                // Tăng giá trị mã đặt phòng cuối cùng lên 1
+                int newBookingId = lastBookingId + 1;
+
+                // Gán mã đặt phòng mới cho trường tương ứng trong đối tượng Hosokhachhang
+                h.Madatphong = newBookingId.ToString();
+
+                // Các bước khác để nhập thông tin khách hàng
+                // ...
+
+                Console.WriteLine("=================================================");
+                binaryTree.Insert(h);
+
+                // Ghi mã đặt phòng mới vào file
+                WriteLastBookingIdToFile(filePath, newBookingId);
+           
+
+
+            Console.WriteLine("Nhập tên khách hàng: ");
                 h.Tenkhachhang = Console.ReadLine().ToLower();
 
                 do
@@ -135,29 +154,17 @@ namespace Do_an_CTDL
                 Console.WriteLine("Nhập email khách hàng");
                 h.Email = Console.ReadLine();
 
-                bool isValidDate = false;
-                DateTime ngayDatPhong;
-
-                do
-                {
-                    Console.WriteLine("Nhập ngày đặt phòng (MM/dd/yyyy): ");
-                    string dateString = Console.ReadLine();
-
-                    isValidDate = DateTime.TryParseExact(dateString, "MM/dd/yyyy", null, DateTimeStyles.None, out ngayDatPhong);
-
-                    if (!isValidDate)
-                    {
-                        Console.WriteLine("Định dạng ngày không hợp lệ. Vui lòng nhập lại.");
-                    }
-                } while (!isValidDate);
-                h.Ngaydatphong = ngayDatPhong;
+                Console.WriteLine("Nhập số điện thoại khách hàng ");
+                h.sodienthoai = (Console.ReadLine());
 
                 do
                 {
                     Console.WriteLine("Loại phòng đã được đặt:(Standard/Deluxe):  ");
                     h.loaiphong = Console.ReadLine().ToLower();
                 }
-                while (h.loaiphong != "standard" && h.loaiphong != "deluxe" );
+                while (h.loaiphong != "standard" && h.loaiphong != "deluxe");
+
+                h.Ngaydatphong = DateTime.Now;
 
                 Console.WriteLine("Nhập số lượng phòng đã đặt: ");
                 h.luongphong = int.Parse(Console.ReadLine());
@@ -167,61 +174,161 @@ namespace Do_an_CTDL
 
                 do
                 {
-                    Console.WriteLine("Nhập trạng thái hiện tại của phòng(thanh toan/chưa thanh toan): ");
+                    Console.WriteLine("Nhập trạng thái hiện tại của phòng(da thanh toan/chưa thanh toan): ");
                     h.trangthaiphong = Console.ReadLine().ToLower();
                 }
-                while (h.trangthaiphong != "thanh toan" && h.trangthaiphong != "chua thanh toan");
+                while (h.trangthaiphong != "da thanh toan" && h.trangthaiphong != "chua thanh toan");
 
-                Console.WriteLine("Nhập số điện thoại khách hàng ");
-                h.sodienthoai = (Console.ReadLine());
                 Console.WriteLine("=================================================");
                 binaryTree.Insert(h);
             }
+            private int ReadLastBookingIdFromFile(string filePath)
+            {
+                int lastBookingId = 0;
+
+                if (File.Exists(filePath))
+                {
+                    using (StreamReader reader = new StreamReader(filePath))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            string[] parts = line.Split('\t');
+                            if (parts.Length >= 2)
+                            {
+                                string bookingIdString = parts[1];
+                                if (int.TryParse(bookingIdString, out int bookingId))
+                                {
+                                    lastBookingId = bookingId;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return lastBookingId;
+            }
+
+            private void WriteLastBookingIdToFile(string filePath, int bookingId)
+            {
+                File.WriteAllText(filePath, bookingId.ToString());
+            }
         }
-        static void Main()
+
+        static void Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.InputEncoding = Encoding.UTF8;
-            Console.Clear();
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            // Tạo một phiên bản của BinarySearchTree
             BinarySearchTree binaryTree = new BinarySearchTree();
-            int n =0;
+
+            string filePath = @"C:\Users\dell\Downloads\Thông-tin-khách-hàng1 (5).tsv";
+
+            // Đọc từng dòng tệp TSV
+            string[] lines = File.ReadAllLines(filePath);
+            // Lấy mã đặt phòng đầu tiên từ dòng cuối cùng
+            string lastLine = lines[lines.Length - 1];
+            string[] lastLineFields = lastLine.Split('\t');
+          
+            // Giả sử dữ liệu bắt đầu từ dòng thứ hai (không bao gồm tiêu đề)
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i];
+                string[] fields = line.Split('\t');
+
+                // Đọc dữ liệu từ tệp TSV
+                Hosokhachhang hosokhachhang = new Hosokhachhang
+                {
+
+                    Madatphong = fields[1],
+                    Tenkhachhang = fields[2],
+                    GioiTinh = fields[3],
+                    Email = fields[4],
+                    sodienthoai = fields[5],
+                    loaiphong = fields[6],
+                    Ngaydatphong = DateTime.Parse(fields[7]),
+                    luongphong = int.Parse(fields[10]),
+                    luongnguoi = int.Parse(fields[11]),
+                    trangthaiphong = fields[12]
+                };
+
+                // Chèn dữ liệu vào cây tìm kiếm nhị phân
+                binaryTree.Insert(hosokhachhang);
+            }
+
+
+            string answer;
             do
             {
-                Console.WriteLine("Nhập số lượng hồ sơ cần thêm: ");
-                string input = Console.ReadLine();
-                Console.WriteLine("===========================================");
-                if (string.IsNullOrEmpty(input))
+                // Nhắc người dùng tạo hồ sơ mới
+                Console.WriteLine("Bạn có muốn tạo thêm hồ sơ không? (c/k)");
+                answer = Console.ReadLine();
+
+                if (answer.ToLower() == "c")
                 {
-                    Console.WriteLine("Vui lòng nhập một giá trị.");
-                    continue;
+                    // Gọi phương thức TaoHoSo để tạo hồ sơ mới
+                    binaryTree.TaoHoSo(ref binaryTree);
                 }
+            } while (answer.ToLower() == "c");
 
-                if (!int.TryParse(input, out n))
-                {
-                    Console.WriteLine("Giá trị không hợp lệ. Vui lòng nhập một số nguyên.");
-                }
-            } while (n <= 0);
 
-            // Sử dụng giá trị n (số lượng hồ sơ) ở đây
+            // Lưu dữ liệu từ cây tìm kiếm vào một danh sách
+            List<Hosokhachhang> hosoList = new List<Hosokhachhang>();
+            SaveDataToList(binaryTree.Root, hosoList);
 
-            for (int i = 1; i <= n; i++)
-            {
-                binaryTree.TaoHoSo(ref binaryTree);
-            }
-            Console.WriteLine("danh sách các hồ sơ:");
-            binaryTree.TraverseInOrder(binaryTree.Root);
-            Console.WriteLine("=================================================");
-            Console.WriteLine("nhập tên để tìm kiếm: ");
-            string name = Console.ReadLine().ToLower();
-            binaryTree.findname(binaryTree.Root, name);
-            Console.WriteLine("nhập khoảng thời gian đặt phòng để tìm kiếm");
-            Console.Write("từ: ");
-            DateTime date1 = DateTime.Parse(Console.ReadLine());
-            Console.Write("đến: ");
-            DateTime date2 = DateTime.Parse(Console.ReadLine());
-            binaryTree.finddate(binaryTree.Root, date1, date2);
+            // Lưu danh sách hồ sơ vào tệp tin
+            
+            SaveDataToFile(filePath, hosoList);
+
+            Console.WriteLine("Dữ liệu đã được lưu vào tệp tin.");
+
+
+            // Nhắc người dùng nhập tên để tìm kiếm
+            Console.WriteLine("Nhập tên để tìm kiếm:");
+            string searchName = Console.ReadLine();
+
+            // Gọi phương thức findname để tìm kiếm hồ sơ theo tên
+            binaryTree.findname(binaryTree.Root, searchName);
+
+            // Nhắc người dùng nhập ngày bắt đầu và ngày kết thúc
+            Console.WriteLine("Nhập ngày bắt đầu (MM/dd/yyyy): ");
+            DateTime startDate = DateTime.Parse(Console.ReadLine());
+
+            Console.WriteLine("Nhập ngày kết thúc (MM/dd/yyyy): ");
+            DateTime endDate = DateTime.Parse(Console.ReadLine());
+
+            // Gọi phương thức finddate để tìm kiếm hồ sơ trong phạm vi ngày đã chỉ định
+            binaryTree.finddate(binaryTree.Root, startDate, endDate);
+
+            // Đợi người dùng nhập trước khi đóng cửa sổ bảng điều khiển
             Console.ReadLine();
+        }
+        // Phương thức để lưu dữ liệu từ cây tìm kiếm vào danh sách
+        public static void SaveDataToList(Node parent, List<Hosokhachhang> hosoList)
+        {
+            if (parent != null)
+            {
+                SaveDataToList(parent.LeftNode, hosoList);
+                hosoList.Add(parent.Data);
+                SaveDataToList(parent.RightNode, hosoList);
+            }
+        }
+
+        // Phương thức để lưu danh sách hồ sơ vào tệp tin
+        public static void SaveDataToFile(string filePath, List<Hosokhachhang> hosoList)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                CultureInfo viVn = new CultureInfo("vi-VN");
+
+                foreach (Hosokhachhang hoso in hosoList)
+                {
+                    writer.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}",
+                        hoso.Madatphong, hoso.Tenkhachhang, hoso.GioiTinh, hoso.Email,
+                        hoso.sodienthoai, hoso.loaiphong,
+                        hoso.Ngaydatphong.ToString("MM/dd/yyyy", viVn),
+                        hoso.luongphong, hoso.luongnguoi, hoso.trangthaiphong);
+                }
+            }
         }
     }
 }
-

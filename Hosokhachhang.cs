@@ -11,10 +11,13 @@ namespace Do_an_CTDL
     {
         public string Madatphong { get; set; }
         public string Tenkhachhang { get; set; }
+        public string Email { get; set; }
         public string GioiTinh { get; set; }
         public string sodienthoai { get; set; }
         public DateTime Ngaydatphong { get; set; }
         public string loaiphong { get; set; }
+        public int luongphong { get; set; }
+        public int luongnguoi { get; set; }
         public string trangthaiphong { get; set; }
     }
 }
