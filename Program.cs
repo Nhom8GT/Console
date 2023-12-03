@@ -130,8 +130,7 @@ namespace Do_an_CTDL
                 // Gán mã đặt phòng mới cho trường tương ứng trong đối tượng Hosokhachhang
                 h.Madatphong = newBookingId.ToString();
 
-                Console.WriteLine("=================================================");
-                binaryTree.Insert(h);
+                Console.WriteLine("================================================");
 
                 // Ghi mã đặt phòng mới vào file
                 WriteLastBookingIdToFile(filePath, newBookingId);
