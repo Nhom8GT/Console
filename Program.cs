@@ -221,8 +221,7 @@ namespace Do_an_CTDL
 
             // Đọc từng dòng tệp TSV
             string[] lines = File.ReadAllLines(filePath);
-          
-            // Giả sử dữ liệu bắt đầu từ dòng thứ hai (không bao gồm tiêu đề)
+            
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
