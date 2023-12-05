@@ -136,7 +136,7 @@ namespace Do_an_CTDL
                 WriteLastBookingIdToFile(filePath, newBookingId);
            
 
-
+// ghi thông tin còn lại của khách hàng
             Console.WriteLine("Nhập tên khách hàng: ");
                 h.Tenkhachhang = Console.ReadLine().ToLower();
 
@@ -178,6 +178,7 @@ namespace Do_an_CTDL
                 Console.WriteLine("=================================================");
                 binaryTree.Insert(h);
             }
+            // phương thức để đọc mã đặt phòng cuối cùng
             private int ReadLastBookingIdFromFile(string filePath)
             {
                 int lastBookingId = 0;
@@ -244,7 +245,7 @@ namespace Do_an_CTDL
                 };
                 string ngayDatPhongString = fields[6];
                 DateTime ngayDatPhong;
-
+//Kiểm tra xem giá trị của ngayDatPhongString có thể được chuyển đổi thành kiểu DateTime theo định dạng "MM/dd/yyyy" hay không. Nếu chuyển đổi thành công, giá trị được gán vào biến ngayDatPhong.
                 if (DateTime.TryParseExact(ngayDatPhongString, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out ngayDatPhong))
                 {
                     hosokhachhang.Ngaydatphong = ngayDatPhong;
