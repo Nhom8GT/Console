@@ -15,6 +15,8 @@ namespace Do_an_CTDL
         public string GioiTinh { get; set; }
         public string sodienthoai { get; set; }
         public DateTime Ngaydatphong { get; set; }
+        public DateTime Ngaynhanphong { get; set; }
+        public DateTime Ngaytraphong { get; set; }
         public string loaiphong { get; set; }
         public int luongphong { get; set; }
         public int luongnguoi { get; set; }
